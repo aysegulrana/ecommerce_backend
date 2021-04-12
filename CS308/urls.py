@@ -15,7 +15,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.contrib import admin
+from django.urls import path
+from django.contrib import admin
+from django.urls import path
+from rest_framework.urlpatterns import format_suffix_patterns
+from ecommerce import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('user/', views.userList.as_view()),
 ]
