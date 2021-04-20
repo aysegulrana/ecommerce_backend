@@ -26,4 +26,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('user/', views.userList.as_view()),
     path('product/', views.productList.as_view()),
+    path('delete/<int:pk>/', views.delete.as_view()),
+    path('update/<int:pk>/<int:x>/<int:count>/', views.update.as_view()),
+
 ]
