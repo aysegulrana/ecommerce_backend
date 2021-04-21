@@ -28,5 +28,7 @@ urlpatterns = [
     path('product/', views.productList.as_view()),
     path('delete/<int:pk>/', views.delete.as_view()),
     path('update/<int:pk>/<int:x>/<int:count>/', views.update.as_view()),
+    path('cart/', views.cartList.as_view()),
+    path('orders/', views.ordersList.as_view()),
 
 ]

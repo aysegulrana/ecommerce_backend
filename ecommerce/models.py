@@ -24,3 +24,23 @@ class product(models.Model):
     seller = models.CharField(max_length=50)
     image = models.ImageField(null=True)
 
+#is this can be like one model with boolean variable indicating ordered yet
+class cart (models.Model):
+    #user = models.ForeignKey(user, on_delete=models.CASCADE)
+    user = models.OneToOneField(
+        user,
+        on_delete=models.CASCADE,
+        primary_key=True,
+    )
+    product_number = models.IntegerField()
+    products = models.ManyToManyField(product)
+
+class orders(models.Model):
+    user = models.OneToOneField(
+        user,
+        on_delete=models.CASCADE,
+        primary_key=True,
+    )
+    product_number = models.IntegerField()
+    products = models.ManyToManyField(product)
+    delivered = models.BooleanField()
