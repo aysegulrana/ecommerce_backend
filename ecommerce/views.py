@@ -1,7 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404
-from rest_framework.decorators import api_view
 from rest_framework.parsers import JSONParser
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -9,7 +8,11 @@ from rest_framework import status
 from .models import user
 from .serializers import userSerializer
 from .serializers import productSerializer
+from .serializers import cartSerializer
+from .serializers import ordersSerializer
 from .models import product
+from .models import cart
+from .models import orders
 
 
 # Create your views here.
@@ -73,3 +76,13 @@ class update(APIView):
             product1.save()
             return Response("Stock is updated")
 
+class cart(APIView):
+    def get(self, request):
+        cart1 = cart.objects.all()
+        serializer = cartSerializer(cart1, many=True)
+        return Response(serializer.data)
+class orders(APIView):
+    def get(self, request):
+        orders1 = orders.objects.all()
+        serializer = ordersSerializer(orders1, many=True)
+        return Response(serializer.data)
