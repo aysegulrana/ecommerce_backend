@@ -78,11 +78,13 @@ WSGI_APPLICATION = 'CS308.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'user',
-        'HOST': '127.0.0.1',
+        'NAME': 'i8CdCDwHhl',
+        'HOST': 'remotemysql.com',
         'PORT': '3306',
-        'USER': 'root',
-        'PASSWORD': '123456',
+        'USER': 'i8CdCDwHhl',
+        'PASSWORD': 'Tufed6BgJw',
+
+
     }
 }
 

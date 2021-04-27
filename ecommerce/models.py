@@ -32,7 +32,7 @@ class cart (models.Model):
         on_delete=models.CASCADE,
         primary_key=True,
     )
-    product_number = models.IntegerField()
+    #product_number = models.IntegerField()
     products = models.ManyToManyField(product)
 
 class orders(models.Model):
@@ -41,6 +41,7 @@ class orders(models.Model):
         on_delete=models.CASCADE,
         primary_key=True,
     )
-    product_number = models.IntegerField()
+    order_number = models.IntegerField()
+    date=models.DateField()
     products = models.ManyToManyField(product)
     delivered = models.BooleanField()
