@@ -22,7 +22,7 @@ class product(models.Model):
     product_price = models.FloatField()
     warranty = models.CharField(max_length=50)
     seller = models.CharField(max_length=50)
-    image = models.ImageField(null=True)
+    image = models.URLField(null=True)
 
 #is this can be like one model with boolean variable indicating ordered yet
 class cart (models.Model):
