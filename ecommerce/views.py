@@ -8,12 +8,11 @@ from rest_framework import status
 from .models import user
 from .serializers import userSerializer
 from .serializers import productSerializer
-from .serializers import cartSerializer
-from .serializers import ordersSerializer
 from .models import product
+"""from .serializers import cartSerializer
+from .serializers import ordersSerializer
 from .models import cart
-from .models import orders
-
+from .models import orders"""
 
 # Create your views here.
 class userList(APIView):
@@ -76,7 +75,7 @@ class update(APIView):
             product1.save()
             return Response("Stock is updated")
 
-class cart(APIView):
+"""class cart(APIView):
     def get(self, request):
         cart1 = cart.objects.all()
         serializer = cartSerializer(cart1, many=True)
@@ -85,4 +84,4 @@ class orders(APIView):
     def get(self, request):
         orders1 = orders.objects.all()
         serializer = ordersSerializer(orders1, many=True)
-        return Response(serializer.data)
+        return Response(serializer.data)"""
