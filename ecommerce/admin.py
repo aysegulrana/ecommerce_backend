@@ -1,5 +1,5 @@
 from django.contrib import admin
-from . models import user
+from .models import user, cart, cartItem
 from . models import product
 """from . models import cart
 from . models import orders
@@ -10,6 +10,8 @@ from . models import user_orders"""
 
 admin.site.register(product)
 admin.site.register(user)
+admin.site.register(cart)
+admin.site.register(cartItem)
 """admin.site.register(cart)
 admin.site.register(orders)
 admin.site.register(product_cart)

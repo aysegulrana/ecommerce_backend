@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import user
+from .models import user, cart, cartItem
 from .models import product
 """from .models import cart
 from .models import orders
@@ -18,6 +18,29 @@ class userSerializer(serializers.ModelSerializer):
 class productSerializer(serializers.ModelSerializer):
     class Meta:
         model = product
+        fields = '__all__'
+
+class cartSerializer(serializers.ModelSerializer):
+
+    """Serializer for the Cart model."""
+
+    customer = userSerializer(read_only=True)
+    # used to represent the target of the relationship using its __unicode__ method
+    items = serializers.StringRelatedField(many=True)
+
+    class Meta:
+        model = cart
+        fields = '__all__'
+
+class cartItemSerializer(serializers.ModelSerializer):
+
+    """Serializer for the CartItem model."""
+
+    cart = cartSerializer(read_only=True)
+    product = productSerializer(read_only=True)
+
+    class Meta:
+        model = cartItem
         fields = '__all__'
 
 

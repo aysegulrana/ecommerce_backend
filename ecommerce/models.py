@@ -1,8 +1,9 @@
 from django.db import models
-
+from CS308 import settings
 
 # Create your models here.
 class user(models.Model):
+    #REQUIRED_FIELDS=('email')
     firstname = models.CharField(max_length=20)
     lastname = models.CharField(max_length=20)
     email = models.EmailField(max_length=30, primary_key=True)
@@ -36,10 +37,37 @@ class product(models.Model):
         primary_key=True
     )
     # product_number = models.IntegerField()
-    products = models.ManyToManyField(product, through="product_cart")
+    products = models.ManyToManyField(product, through="product_cart")"""
+
+class cart(models.Model):
+    """A model that contains data for a shopping cart."""
+    customer = models.OneToOneField(
+        user,
+        related_name='cart',on_delete=models.CASCADE
+    )
+    cart_id = models.AutoField(primary_key=True)
+
+class cartItem(models.Model):
+    """A model that contains data for an item in the shopping cart."""
+    cart = models.ForeignKey(
+        cart,
+        related_name='items',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True
+    )
+    product = models.ForeignKey(
+        product,
+        related_name='items',
+        on_delete=models.CASCADE
+    )
+    quantity = models.PositiveIntegerField(default=1, null=True, blank=True)
+
+    def __unicode__(self):
+        return '%s: %s' % (self.product.title, self.quantity)
 
 
-class orders(models.Model):
+"""class orders(models.Model):
     user = models.OneToOneField(
         user,
         on_delete=models.CASCADE,
