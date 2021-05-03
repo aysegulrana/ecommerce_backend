@@ -82,14 +82,14 @@ DATABASES = {
         'PORT': '3306',
         'USER': 'i8CdCDwHhl',
         'PASSWORD': 'Tufed6BgJw',
-        'TEST': {
-            'NAME': 'mytestdatabase',
-            'ENGINE': 'django.db.backends.mysql',
-            'HOST': 'remotemysql.com',
-            'PORT': '3306',
-            'USER': 'i8CdCDwHhl',
-            'PASSWORD': 'Tufed6BgJw',
-        },
+      #  'TEST': {
+       #     'NAME': 'mytestdatabase',
+        #    'ENGINE': 'django.db.backends.mysql',
+         #   'HOST': 'remotemysql.com',
+          #  'PORT': '3306',
+           # 'USER': 'i8CdCDwHhl',
+           # 'PASSWORD': 'Tufed6BgJw',
+        #},"""
     }
 }
 
