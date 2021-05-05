@@ -1,9 +1,10 @@
 from django.db import models
 from CS308 import settings
 
+
 # Create your models here.
 class user(models.Model):
-    #REQUIRED_FIELDS=('email')
+    # REQUIRED_FIELDS=('email')
     firstname = models.CharField(max_length=20)
     lastname = models.CharField(max_length=20)
     email = models.EmailField(max_length=30, primary_key=True)
@@ -39,13 +40,15 @@ class product(models.Model):
     # product_number = models.IntegerField()
     products = models.ManyToManyField(product, through="product_cart")"""
 
+
 class cart(models.Model):
     """A model that contains data for a shopping cart."""
     customer = models.OneToOneField(
         user,
-        related_name='cart',on_delete=models.CASCADE
+        related_name='cart', on_delete=models.CASCADE
     )
     cart_id = models.AutoField(primary_key=True)
+
 
 class cartItem(models.Model):
     """A model that contains data for an item in the shopping cart."""

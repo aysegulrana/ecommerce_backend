@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import user, cart, cartItem
 from .models import product
+
 """from .models import cart
 from .models import orders
 from .models import product_cart
@@ -20,8 +21,8 @@ class productSerializer(serializers.ModelSerializer):
         model = product
         fields = '__all__'
 
-class cartSerializer(serializers.ModelSerializer):
 
+class cartSerializer(serializers.ModelSerializer):
     """Serializer for the Cart model."""
 
     customer = userSerializer(read_only=True)
@@ -32,8 +33,8 @@ class cartSerializer(serializers.ModelSerializer):
         model = cart
         fields = '__all__'
 
-class cartItemSerializer(serializers.ModelSerializer):
 
+class cartItemSerializer(serializers.ModelSerializer):
     """Serializer for the CartItem model."""
 
     cart = cartSerializer(read_only=True)

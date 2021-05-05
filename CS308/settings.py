@@ -37,10 +37,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'ecommerce',
-    'corsheaders'
+    'ecommerce'
 ]
-
+    #'corsheaders'
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -49,13 +48,13 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
 ]
+#'corsheaders.middleware.CorsMiddleware',
 
-CORS_ORIGIN_WHITELIST = (
+"""CORS_ORIGIN_WHITELIST = (
     'http://localhost:8080/',
     'http://192.168.0.102:8080/',
-)
+)"""
 
 ROOT_URLCONF = 'CS308.urls'
 
