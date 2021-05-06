@@ -122,22 +122,53 @@ class updateCart(APIView):
         userCart = user.objects.get(email= userID)
         cartInProcess = cart.objects.get(customer=userCart)
 
-        existing_cart_item = cartItem.objects.filter(cart=cart, product=productToAdd).first()
+        existing_cart_item = cartItem.objects.filter(cart=cartInProcess, product=productToAdd).first()
         # before creating a new cart item check if it is in the cart already
         # and if yes increase the quantity of that item
         if existing_cart_item:
             existing_cart_item.quantity += quantity
             existing_cart_item.save()
         else:
-            new_cart_item = cartItem(cart=cart, product=productToAdd, quantity=quantity)
+            new_cart_item = cartItem(cart=cartInProcess, product=productToAdd, quantity=quantity)
             new_cart_item.save()
 
         # return the updated cart to indicate success
-        serializer = cartSerializer(cart)
+        serializer = cartSerializer(cartInProcess)
         return Response(serializer.data)
 
+class emptyCart(APIView):
+    def get(self,request,cartID):
+        currentCart=cart.objects.get(cart_id=cartID)
+        try:
+            items = cartItem.objects.filter(cart=currentCart)
+        except Exception as e:
+            print(e)
+            return Response({'status': 'fail'})
+        for i in items:
+            i.delete()
+        serializer = cartSerializer(currentCart)
+        return Response(serializer.data)
 
-
+class removeFromCart(APIView):
+    def get(self, request, cartID, prodID):
+        c = cart.objects.get(cart_id=cartID)
+        p = product.objects.get(id=prodID)
+        # u = user.objects.get(email=userID)
+        try:
+            item = cartItem.objects.get(cart=c, product=p)
+        except Exception as e:
+            print(e)
+            return Response({'status': 'fail'})
+                    # if removing an item where the quantity is 1, remove the cart item
+                    # completely otherwise decrease the quantity of the cart item
+        if item.quantity == 1:
+            item.delete()
+        else:
+            item.quantity -= 1
+            item.save()
+                    # return the updated cart to indicate success
+        serializer = cartSerializer(c)
+        return Response(serializer.data)
 
         """  def add_to_cart(self, request, pk=None):
         Add an item to a user's cart.
@@ -181,45 +212,6 @@ class updateCart(APIView):
         return Response(serializer.data)
 
     # @detail_route(methods=['post', 'put'])
-    def remove_from_cart(self, request, pk=None):
-        Remove an item from a user's cart.
-        Like on the Everlane website, customers can only remove items from the
-        cart 1 at a time, so the quantity of the product to remove from the cart
-        will always be 1. If the quantity of the product to remove from the cart
-        is 1, delete the cart item. If the quantity is more than 1, decrease
-        the quantity of the cart item, but leave it in the cart.
-        Parameters
-        ----------
-        request: request
-        Return the updated cart.
-        
-        cart = self.get_object()
-        try:
-            prod = product.objects.get(
-                pk=request.data['id']
-            )
-        except Exception as e:
-            print(e)
-            return Response({'status': 'fail'})
-
-        try:
-            cart_item = cartItem.objects.get(cart=cart, product=prod)
-        except Exception as e:
-            print(e)
-            return Response({'status': 'fail'})
-
-        # if removing an item where the quantity is 1, remove the cart item
-        # completely otherwise decrease the quantity of the cart item
-        if cart_item.quantity == 1:
-            cart_item.delete()
-        else:
-            cart_item.quantity -= 1
-            cart_item.save()
-
-        # return the updated cart to indicate success
-        serializer = cartSerializer(cart)
-        return Response(serializer.data)
-
 
 class CartItemViewSet(APIView):
     
