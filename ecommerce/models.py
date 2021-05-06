@@ -7,10 +7,11 @@ class user(models.Model):
     # REQUIRED_FIELDS=('email')
     firstname = models.CharField(max_length=20)
     lastname = models.CharField(max_length=20)
-    email = models.EmailField(max_length=30, primary_key=True)
+    email = models.EmailField(max_length=30)
     address = models.TextField(max_length=200, null=True)
     password = models.CharField(max_length=15)
     userType = models.IntegerField(default=0, auto_created=True)
+    userID = models.AutoField(primary_key=True)
 
     def __str__(self):
         return self.firstname

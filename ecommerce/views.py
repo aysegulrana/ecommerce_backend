@@ -96,16 +96,51 @@ class orders(APIView):
         return Response(serializer.data)"""
 
 
-class cart(APIView):
+class cartAPI(APIView):
     """
     API endpoint that allows carts to be viewed or edited.
     """
+    def get(self, request):
+
+        user_id = request.query_params["email"]
+        if user_id is not None:
+            user1 = user.objects.get(email=user_id)
+            cart1 = cart.objects.get(customer= user1)
+            cart_items = cartItem.objects.filter(cart= cart1)
+            serializer = cartItemSerializer(cart_items, many=True)
+            return Response(serializer.data)
+        else:
+            return Response("Cart is empty")
+
     queryset = cart.objects.all()
     serializer_class = cartSerializer
 
-    # @detail_route(methods=['post', 'put'])
-    def add_to_cart(self, request, pk=None):
-        """Add an item to a user's cart.
+
+class updateCart(APIView):
+    def get(self, request, userID, productID,quantity):
+        productToAdd = product.objects.get(id= productID)
+        userCart = user.objects.get(email= userID)
+        cartInProcess = cart.objects.get(customer=userCart)
+
+        existing_cart_item = cartItem.objects.filter(cart=cart, product=productToAdd).first()
+        # before creating a new cart item check if it is in the cart already
+        # and if yes increase the quantity of that item
+        if existing_cart_item:
+            existing_cart_item.quantity += quantity
+            existing_cart_item.save()
+        else:
+            new_cart_item = cartItem(cart=cart, product=productToAdd, quantity=quantity)
+            new_cart_item.save()
+
+        # return the updated cart to indicate success
+        serializer = cartSerializer(cart)
+        return Response(serializer.data)
+
+
+
+
+        """  def add_to_cart(self, request, pk=None):
+        Add an item to a user's cart.
         Adding to cart is disallowed if there is not enough inventory for the
         product available. If there is, the quantity is increased on an existing
         cart item or a new cart item is created with that quantity and added
@@ -114,7 +149,7 @@ class cart(APIView):
         ----------
         request: request
         Return the updated cart.
-        """
+        
         cart = self.get_object()
         try:
             prod = product.objects.get(
@@ -127,9 +162,9 @@ class cart(APIView):
 
         # Disallow adding to cart if available inventory is not enough
         # this is frontend's job??
-        """if product.available_inventory <= 0 or product.available_inventory - quantity < 0:
+        if product.available_inventory <= 0 or product.available_inventory - quantity < 0:
             print ("There is no more product available")
-            return Response({'status': 'fail'})"""
+            return Response({'status': 'fail'})
 
         existing_cart_item = cartItem.objects.filter(cart=cart, product=prod).first()
         # before creating a new cart item check if it is in the cart already
@@ -147,7 +182,7 @@ class cart(APIView):
 
     # @detail_route(methods=['post', 'put'])
     def remove_from_cart(self, request, pk=None):
-        """Remove an item from a user's cart.
+        Remove an item from a user's cart.
         Like on the Everlane website, customers can only remove items from the
         cart 1 at a time, so the quantity of the product to remove from the cart
         will always be 1. If the quantity of the product to remove from the cart
@@ -157,7 +192,7 @@ class cart(APIView):
         ----------
         request: request
         Return the updated cart.
-        """
+        
         cart = self.get_object()
         try:
             prod = product.objects.get(
@@ -187,8 +222,10 @@ class cart(APIView):
 
 
 class CartItemViewSet(APIView):
-    """
+    
     API endpoint that allows cart items to be viewed or edited.
-    """
+    
     queryset = cartItem.objects.all()
-    serializer_class = cartItemSerializer
+    serializer_class = cartItemSerializer 
+    
+    """
