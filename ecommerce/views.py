@@ -23,8 +23,14 @@ from .models import cartItem
 # Create your views here.
 class userList(APIView):
     def get(self, request):
-        user1 = user.objects.all()
-        serializer = userSerializer(user1, many=True)
+        try:
+            user_mail = request.query_params["email"]
+            if user_mail is not None:
+                u1 = user.objects.get(email=user_mail)
+                serializer = userSerializer(u1)
+        except:
+            u1 = user.objects.all()
+            serializer = userSerializer(u1, many=True)
         return Response(serializer.data)
 
     def post(self, request):
@@ -33,7 +39,6 @@ class userList(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 class productList(APIView):
     def get(self, request):
@@ -82,19 +87,6 @@ class update(APIView):
             product1.product_stock -= count
             product1.save()
             return Response("Stock is updated")
-
-
-"""class cart(APIView):
-    def get(self, request):
-        cart1 = cart.objects.all()
-        serializer = cartSerializer(cart1, many=True)
-        return Response(serializer.data)
-class orders(APIView):
-    def get(self, request):
-        orders1 = orders.objects.all()
-        serializer = ordersSerializer(orders1, many=True)
-        return Response(serializer.data)"""
-
 
 class cartAPI(APIView):
     """
