@@ -83,21 +83,34 @@ class cartItem(models.Model):
     delivered = models.BooleanField()
 
 
-class product_orders(models.Model):
-    prod = models.ForeignKey(product, on_delete=models.CASCADE)
-    order = models.ForeignKey(orders, on_delete=models.CASCADE)
+"""
 
+class order(models.Model):
+    customer = models.ForeignKey(
+        user,
+        related_name='orders',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True
+    )
+    total = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    order_id = models.AutoField(primary_key=True)
 
-class user_orders(models.Model):
-    order = models.ForeignKey(orders, on_delete=models.CASCADE)
-    usr = models.ForeignKey(user, on_delete=models.CASCADE)
-
-
-class product_cart(models.Model):
-    prod = models.ForeignKey(product, on_delete=models.CASCADE)
-    c = models.ForeignKey(cart, on_delete=models.CASCADE)
-
-
-class user_cart(models.Model):
-    c = models.ForeignKey(cart, on_delete=models.CASCADE)
-    usr = models.ForeignKey(user, on_delete=models.CASCADE)"""
+class orderItem(models.Model):
+    """A model that contains data for an item in an order."""
+    order = models.ForeignKey(
+        order,
+        related_name='order_items',
+        on_delete=models.CASCADE
+    )
+    product = models.ForeignKey(
+        product,
+        related_name='order_items',
+        on_delete=models.CASCADE
+    )
+    quantity = models.PositiveIntegerField(null=True, blank=True)
+    state=models.IntegerField()
+    #def __unicode__(self):
+        #return '%s: %s' % (self.product.title, self.quantity)
