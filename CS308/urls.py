@@ -33,8 +33,8 @@ urlpatterns = [
     path('removeFromCart/<int:cartID>/<int:prodID>/', views.removeFromCart.as_view()),
     path('emptyCart/<int:cartID>/', views.emptyCart.as_view()),
     path('orderAPI/', views.orderAPI.as_view()),
-    path('updateOrder/<str:userID>/<int:productID>/<int:quantity>/', views.updateOrder.as_view()),
-    path('removeFromOrder/<int:orderID>/<int:prodID>/', views.removeFromOrder.as_view()),
-    path('emptyOrder/<int:orderID>/', views.emptyOrder.as_view()),
+    #path('updateOrder/<str:userID>/<int:productID>/<int:quantity>/', views.updateOrder.as_view()),
+   # path('removeFromOrder/<int:orderID>/<int:prodID>/', views.removeFromOrder.as_view()),
+   # path('emptyOrder/<int:orderID>/', views.emptyOrder.as_view()),
     path('orderStatus/<str:userID>/<int:productID>/<int:quantity>/', views.orderStatus.as_view()),
 ]

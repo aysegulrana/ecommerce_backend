@@ -180,7 +180,7 @@ class orderAPI(APIView):
     queryset = order.objects.all()
     serializer_class = orderSerializer
 
-class updateOrder(APIView):
+"""class updateOrder(APIView):
     def get(self, request, userID, productID, quantity):
         productToAdd = product.objects.get(id= productID)
         userOrder = user.objects.get(email= userID)
@@ -198,7 +198,7 @@ class updateOrder(APIView):
 
         # return the updated cart to indicate success
         serializer = orderSerializer(orderInProcess)
-        return Response(serializer.data)
+        return Response(serializer.data)"""
 
 class orderStatus(APIView):
     def get(self, request, userID, productID, quantity):
@@ -214,7 +214,7 @@ class orderStatus(APIView):
         serializer = orderSerializer(orderInProcess)
         return Response(serializer.data)
 
-class emptyOrder(APIView):
+"""class emptyOrder(APIView):
     def get(self,request,orderID):
         currentOrder=order.objects.get(order_id=orderID)
         try:
@@ -225,9 +225,9 @@ class emptyOrder(APIView):
         for i in items:
             i.delete()
         serializer = orderSerializer(currentOrder)
-        return Response(serializer.data)
+        return Response(serializer.data)"""
 
-class removeFromOrder(APIView):
+"""class removeFromOrder(APIView):
     def get(self, request, orderID, prodID):
         c = order.objects.get(order_id=orderID)
         p = product.objects.get(id=prodID)
@@ -246,4 +246,11 @@ class removeFromOrder(APIView):
             item.save()
                     # return the updated cart to indicate success
         serializer = orderSerializer(c)
-        return Response(serializer.data)
+        return Response(serializer.data)"""
+
+class cancelOrder(APIView):
+    def get(self, request, pk, format=None):
+        snippet = order.objects.get(order_id=pk)
+        snippet.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
