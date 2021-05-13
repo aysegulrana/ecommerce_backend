@@ -15,9 +15,6 @@ from .serializers import orderSerializer, orderItemSerializer
 from .models import cart, order, orderItem
 from .models import cartItem
 
-
-# from .models import orders"""
-
 # Create your views here.
 class userList(APIView):
     def get(self, request):
@@ -35,11 +32,23 @@ class userList(APIView):
         serializer = userSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            """empty_cart=cart.objects.create(customer=request.data)
+            u=user.objects.get(email=serializer.data.get('email',None))
+            empty_cart=cart.objects.create(customer=u)
             s_cart=cartSerializer(data=empty_cart)
-            s_cart.save()"""
+            if s_cart.is_valid():
+                s_cart.save()
+                empty_order=order.objects.create(customer=u,total=0)
+                s_order=orderSerializer(data=empty_order)
+                if s_order.is_valid():
+                    s_order.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class deleteUser(APIView):
+    def get(self, request, mail, format=None):
+        snippet = user.objects.filter(email=mail)
+        snippet.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 class productList(APIView):
     def get(self, request):
