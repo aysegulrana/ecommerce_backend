@@ -34,11 +34,11 @@ urlpatterns = [
     path('removeFromCart/<int:cartID>/<int:prodID>/', views.removeFromCart.as_view()),
     path('emptyCart/<int:cartID>/', views.emptyCart.as_view()),
     path('orderAPI/', views.orderAPI.as_view()),
-    path('postOrder/', views.postOrder.as_view()),
     path('orderStatus/<str:userID>/<int:productID>/<int:quantity>/', views.orderStatus.as_view()),
     path('cancelOrder/<int:ID>/', views.cancelOrder.as_view()),
+    path('cancelOrderItem/<int:prodID>/', views.cancelOrderItem.as_view()),
     path('changeAddress/<str:mail>/<str:new_address>/', views.changeAddress.as_view()),
     path('changeName/<str:mail>/<str:name>/<str:surname>/', views.changeName.as_view()),
     path('changePassword/<str:mail>/<str:new_pass>/', views.changePassword.as_view()),
-
+    path('cartToOrder/<str:id>/', views.cartToOrder.as_view()),
 ]

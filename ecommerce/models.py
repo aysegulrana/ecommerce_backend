@@ -11,7 +11,7 @@ class user(models.Model):
     address = models.TextField(max_length=200, null=True)
     password = models.CharField(max_length=15)
     userType = models.IntegerField(default=0, auto_created=True)
-    #userID = models.AutoField(primary_key=True)
+    #userID = models.AutoField(unique=True)
 
     def __str__(self):
         return self.firstname
@@ -28,19 +28,6 @@ class product(models.Model):
     warranty = models.CharField(max_length=50)
     seller = models.CharField(max_length=50)
     image = models.URLField(null=True)
-
-
-# is this can be like one model with boolean variable indicating ordered yet
-"""class cart(models.Model):
-    # user = models.ForeignKey(user, on_delete=models.CASCADE)
-    user = models.OneToOneField(
-        user,
-        on_delete=models.CASCADE,
-        primary_key=True
-    )
-    # product_number = models.IntegerField()
-    products = models.ManyToManyField(product, through="product_cart")"""
-
 
 class cart(models.Model):
     """A model that contains data for a shopping cart."""
@@ -69,21 +56,6 @@ class cartItem(models.Model):
 
     def __unicode__(self):
         return '%s: %s' % (self.product.title, self.quantity)
-
-
-"""class orders(models.Model):
-    user = models.OneToOneField(
-        user,
-        on_delete=models.CASCADE,
-        primary_key=True
-    )
-    order_number = models.IntegerField()
-    date = models.DateField()
-    products = models.ManyToManyField(product, through="product_orders")
-    delivered = models.BooleanField()
-
-
-"""
 
 class order(models.Model):
     customer = models.ForeignKey(

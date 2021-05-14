@@ -1,3 +1,5 @@
+import decimal
+
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404
@@ -95,14 +97,14 @@ class productList(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
+#delete product
 class delete(APIView):
     def get(self, request, pk, format=None):
         snippet = product.objects.filter(id=pk)
         snippet.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-
+#change product stock
 class update(APIView):
     def get(self, request, pk, x, count, format=None):
         if x == 1:
@@ -131,9 +133,6 @@ class cartAPI(APIView):
             return Response(serializer.data)
         else:
             return Response("Cart is empty")
-
-    queryset = cart.objects.all()
-    serializer_class = cartSerializer
 
 class updateCart(APIView):
     def get(self, request, userID, productID,quantity):
@@ -208,7 +207,6 @@ class orderAPI(APIView):
     queryset = order.objects.all()
     serializer_class = orderSerializer
 
-
 class orderStatus(APIView):
     def get(self, request, userID, productID, quantity):
         p = product.objects.get(id= productID)
@@ -223,22 +221,54 @@ class orderStatus(APIView):
         serializer = orderSerializer(orderInProcess)
         return Response(serializer.data)
 
-
-
 #OLMADI BU
 # cart'ı order'a dönüştürmek için
-class postOrder(APIView):
-    def post(self, request):
-        serializer = orderSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            u=order.objects.get(email=serializer.data.get('email',None))
-            empty_order=order.objects.create(customer=u)
-            s_order=orderSerializer(data=empty_order)
+class cartToOrder(APIView):
+    def get(self, request, id):
+        u = user.objects.get(email=id)
+        c = cart.objects.get(customer=u)
+        o = order.objects.get(customer=u)
+        items = cartItem.objects.filter(cart=c)
+        s_item = cartItemSerializer(items, many=True)
+        for item in s_item.data:
+            #s = cartItemSerializer(data=item)
+            #if s.is_valid():
+                #s.save()
+
+            p = item.get('product',None) #get product from cart item
+            p=product.objects.get(id=p.get('id',None))
+            q = item.get('quantity', None)  #get quantity from cart item
+
+            order_item =orderItem.objects.create(product=p,order=o,quantity=q,state=0)
+            o.total += decimal.Decimal(p.product_price * q) #find how much this cart item adds to the total order payment
+            #saving the created order item
+            o.save()
+            s_order = orderItemSerializer(data=order_item)
             if s_order.is_valid():
                 s_order.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            #item.delete() #remove from the cart
+        order_items = orderItem.objects.filter(order=o)
+        serializer = orderItemSerializer(order_items, many=True)
+        return Response(serializer.data)
+
+        """serializer = cartItemSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            current_cart=serializer.data.get('cart',None) #we got cart from cart item
+            current_user=current_cart.get('customer',None) #user from cart
+            prod=serializer.data.get('product',None) #product from cart item
+            quant=serializer.data.get('quantity',None) #quantity from cart item
+            current_order=order.objects.get(customer=current_user)
+            current_order.total+=(prod.product_price*quant)
+            #***order from user yoksa yeni order mı create etmeliyim?
+
+            item=orderItem.objects.create(product=prod,order=current_order,quantity=quant,state=0)
+            s_order=orderItemSerializer(data=item)
+
+            if s_order.is_valid():
+                s_order.save()
+                return Response(s_order.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)"""
 
 #API for cancelling an existing order. Takes order ID as parameter
 class cancelOrder(APIView):
@@ -247,3 +277,8 @@ class cancelOrder(APIView):
         snippet.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+class cancelOrderItem(APIView):
+    def get(self, request, prodID):
+        snippet = orderItem.objects.filter(product.objects.get(id=prodID))
+        snippet.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
