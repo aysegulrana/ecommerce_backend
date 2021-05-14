@@ -50,7 +50,7 @@ class orderSerializer(serializers.ModelSerializer):
 
     customer = userSerializer(read_only=True)
     # used to represent the target of the relationship using its __unicode__ method
-    items = serializers.StringRelatedField(many=True)
+    order_items = serializers.StringRelatedField(many=True)
 
     class Meta:
         model = order

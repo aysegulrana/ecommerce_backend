@@ -14,6 +14,7 @@ from .serializers import cartItemSerializer
 from .serializers import orderSerializer, orderItemSerializer
 from .models import cart, order, orderItem
 from .models import cartItem
+from django.shortcuts import get_object_or_404
 
 # Create your views here.
 class userList(APIView):
@@ -37,10 +38,6 @@ class userList(APIView):
             s_cart=cartSerializer(data=empty_cart)
             if s_cart.is_valid():
                 s_cart.save()
-                empty_order=order.objects.create(customer=u,total=0)
-                s_order=orderSerializer(data=empty_order)
-                if s_order.is_valid():
-                    s_order.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -49,6 +46,28 @@ class deleteUser(APIView):
         snippet = user.objects.filter(email=mail)
         snippet.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+class changeAddress(APIView):
+    def get(self,request,mail, new_address):
+        user1 = user.objects.get(email=mail)
+        user1.address = new_address
+        user1.save()
+        return Response("Address is changed")
+
+class changeName(APIView):
+    def get(self,request,mail,name,surname):
+        user1 = user.objects.get(email=mail)
+        user1.firstname= name
+        user1.lastname= surname
+        user1.save()
+        return Response("User name is changed")
+
+class changePassword(APIView):
+    def get(self,request,mail,new_pass):
+        user1 = user.objects.get(email=mail)
+        user1.password = new_pass
+        user1.save()
+        return Response("Password is changed")
 
 class productList(APIView):
     def get(self, request):
@@ -175,39 +194,20 @@ class orderAPI(APIView):
     API endpoint that allows carts to be viewed or edited.
     """
     def get(self, request):
-
         user_id = request.query_params["email"]
         if user_id is not None:
             user1 = user.objects.get(email=user_id)
-            order1 = order.objects.get(customer= user1)
+            order1 = get_object_or_404(order,customer= user1)
             order_items = orderItem.objects.filter(order= order1)
             serializer = orderItemSerializer(order_items, many=True)
             return Response(serializer.data)
+
         else:
-                return Response("No orders")
+            return Response("No orders")
 
     queryset = order.objects.all()
     serializer_class = orderSerializer
 
-"""class updateOrder(APIView):
-    def get(self, request, userID, productID, quantity):
-        productToAdd = product.objects.get(id= productID)
-        userOrder = user.objects.get(email= userID)
-        orderInProcess = order.objects.get(customer=userOrder)
-
-        existing_order_item = orderItem.objects.filter(order=orderInProcess, product=productToAdd).first()
-        # before creating a new cart item check if it is in the cart already
-        # and if yes increase the quantity of that item
-        if existing_order_item:
-            existing_order_item.quantity += quantity
-            existing_order_item.save()
-        else:
-            new_order_item = orderItem(order=orderInProcess, product=productToAdd, quantity=quantity, state=0)
-            new_order_item.save()
-
-        # return the updated cart to indicate success
-        serializer = orderSerializer(orderInProcess)
-        return Response(serializer.data)"""
 
 class orderStatus(APIView):
     def get(self, request, userID, productID, quantity):
@@ -223,43 +223,27 @@ class orderStatus(APIView):
         serializer = orderSerializer(orderInProcess)
         return Response(serializer.data)
 
-"""class emptyOrder(APIView):
-    def get(self,request,orderID):
-        currentOrder=order.objects.get(order_id=orderID)
-        try:
-            items = orderItem.objects.filter(order=currentOrder)
-        except Exception as e:
-            print(e)
-            return Response({'status': 'fail'})
-        for i in items:
-            i.delete()
-        serializer = orderSerializer(currentOrder)
-        return Response(serializer.data)"""
 
-"""class removeFromOrder(APIView):
-    def get(self, request, orderID, prodID):
-        c = order.objects.get(order_id=orderID)
-        p = product.objects.get(id=prodID)
-        # u = user.objects.get(email=userID)
-        try:
-            item = orderItem.objects.get(order=c, product=p)
-        except Exception as e:
-            print(e)
-            return Response({'status': 'fail'})
-                    # if removing an item where the quantity is 1, remove the cart item
-                    # completely otherwise decrease the quantity of the cart item
-        if item.quantity == 1:
-            item.delete()
-        else:
-            item.quantity -= 1
-            item.save()
-                    # return the updated cart to indicate success
-        serializer = orderSerializer(c)
-        return Response(serializer.data)"""
 
+#OLMADI BU
+# cart'ı order'a dönüştürmek için
+class postOrder(APIView):
+    def post(self, request):
+        serializer = orderSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            u=order.objects.get(email=serializer.data.get('email',None))
+            empty_order=order.objects.create(customer=u)
+            s_order=orderSerializer(data=empty_order)
+            if s_order.is_valid():
+                s_order.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+#API for cancelling an existing order. Takes order ID as parameter
 class cancelOrder(APIView):
-    def get(self, request, pk, format=None):
-        snippet = order.objects.get(order_id=pk)
+    def get(self, request, ID):
+        snippet = order.objects.filter(order_id=ID)
         snippet.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 

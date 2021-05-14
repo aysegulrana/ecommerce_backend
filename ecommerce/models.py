@@ -112,5 +112,7 @@ class orderItem(models.Model):
     )
     quantity = models.PositiveIntegerField(null=True, blank=True)
     state=models.IntegerField()
+
+    #order'da total price artırılması yazılacak.
     #def __unicode__(self):
         #return '%s: %s' % (self.product.title, self.quantity)
