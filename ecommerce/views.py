@@ -239,13 +239,19 @@ class cartToOrder(APIView):
             p=product.objects.get(id=p.get('id',None))
             q = item.get('quantity', None)  #get quantity from cart item
 
-            order_item =orderItem.objects.create(product=p,order=o,quantity=q,state=0)
+            existing_order_item = orderItem.objects.filter(order=o, product=p).first()
+            if existing_order_item:
+                existing_order_item.quantity += q
+                existing_order_item.save()
+            else:
+                order_item =orderItem.objects.create(product=p,order=o,quantity=q,state=0)
+                s_order = orderItemSerializer(data=order_item)
+                if s_order.is_valid():
+                    s_order.save()
             o.total += decimal.Decimal(p.product_price * q) #find how much this cart item adds to the total order payment
-            #saving the created order item
+            #saving the changes in order
             o.save()
-            s_order = orderItemSerializer(data=order_item)
-            if s_order.is_valid():
-                s_order.save()
+
             #item.delete() #remove from the cart
         order_items = orderItem.objects.filter(order=o)
         serializer = orderItemSerializer(order_items, many=True)

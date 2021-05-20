@@ -71,7 +71,6 @@ class order(models.Model):
     order_id = models.AutoField(primary_key=True)
 
 class orderItem(models.Model):
-    """A model that contains data for an item in an order."""
     order = models.ForeignKey(
         order,
         related_name='order_items',
