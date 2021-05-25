@@ -17,6 +17,8 @@ from .serializers import orderSerializer, orderItemSerializer
 from .models import cart, order, orderItem
 from .models import cartItem
 from django.shortcuts import get_object_or_404
+from django.conf import settings
+from django.core.mail import send_mail
 
 # Create your views here.
 class userList(APIView):
@@ -35,6 +37,12 @@ class userList(APIView):
         serializer = userSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
+            subject = "Your account is active!"
+            message = "You have successfully registered to our website."
+            from_email = settings.EMAIL_HOST_USER
+            to_list = [serializer.email]
+            send_mail(subject,message,from_email,to_list,fail_silently=True)
+
             u=user.objects.get(email=serializer.data.get('email',None))
             empty_cart=cart.objects.create(customer=u)
             s_cart=cartSerializer(data=empty_cart)
@@ -251,6 +259,14 @@ class cartToOrder(APIView):
             o.total += decimal.Decimal(p.product_price * q) #find how much this cart item adds to the total order payment
             #saving the changes in order
             o.save()
+
+            #Sending the invoice
+            """          
+            subject = "Invoice"
+            message = "Thank you for your order. You may find the invoice attached."
+            from_email = settings.EMAIL_HOST_USER
+            to_list = [id]
+            send_mail(subject,message,from_email,to_list,fail_silently=True)"""
 
             #item.delete() #remove from the cart
         order_items = orderItem.objects.filter(order=o)
