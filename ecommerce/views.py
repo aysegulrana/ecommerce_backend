@@ -7,8 +7,8 @@ from rest_framework.parsers import JSONParser
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .models import user
-from .serializers import userSerializer
+from .models import user, comment
+from .serializers import userSerializer, commentSerializer
 from .serializers import productSerializer
 from .models import product
 from .serializers import cartSerializer
@@ -286,5 +286,25 @@ class cancelOrder(APIView):
 class cancelOrderItem(APIView):
     def get(self, request, prodID):
         snippet = orderItem.objects.filter(product.objects.get(id=prodID))
+        snippet.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+class comments(APIView):
+    def get(self, request):
+        related_product = request.query_params["id"]
+        p1 = comment.objects.all(id=related_product)
+        serializer = commentSerializer(p1,many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = commentSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class deleteComment(APIView):
+    def get(self, request, comment_id, format=None):
+        snippet = comment.objects.filter(commentID=comment_id)
         snippet.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

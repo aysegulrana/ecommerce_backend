@@ -87,3 +87,18 @@ class orderItem(models.Model):
     #order'da total price artırılması yazılacak.
     #def __unicode__(self):
         #return '%s: %s' % (self.product.title, self.quantity)
+
+class comment(models.Model):
+    userCommenting = models.ForeignKey(
+        user,
+        related_name='user',
+        on_delete=models.CASCADE
+    )
+    productCommenting = models.ForeignKey(
+        product,
+        related_name='product',
+        on_delete=models.CASCADE
+    )
+    commentText = models.TextField(max_length=500)
+    isApproved = models.IntegerField(default=0)
+    commentID = models.AutoField()

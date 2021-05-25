@@ -66,3 +66,11 @@ class orderItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = orderItem
         fields = '__all__'
+
+class commentSerializer(serializers.ModelSerializer):
+    product = productSerializer(read_only=True)
+    user = userSerializer(read_only=True)
+
+    class Meta:
+        model = comment
+        fields = '__all__'
