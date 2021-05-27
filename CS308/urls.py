@@ -41,6 +41,8 @@ urlpatterns = [
     path('changeName/<str:mail>/<str:name>/<str:surname>/', views.changeName.as_view()),
     path('changePassword/<str:mail>/<str:new_pass>/', views.changePassword.as_view()),
     path('cartToOrder/<str:id>/', views.cartToOrder.as_view()),
-
+    path('rate/<int:productID>/<int:rate>/', views.rate.as_view()),
+    path('comments/', views.comments.as_view()),
+    path('deletecomment/<int:comment_id>/', views.deleteComment.as_view()),
     #comment'in path'lerini henüz eklemedim.
 ]

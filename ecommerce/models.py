@@ -28,6 +28,8 @@ class product(models.Model):
     warranty = models.CharField(max_length=50)
     seller = models.CharField(max_length=50)
     image = models.URLField(null=True)
+    rate=models.FloatField(default=0.0)
+    rate_number=models.IntegerField()
 
 class cart(models.Model):
     """A model that contains data for a shopping cart."""
@@ -101,4 +103,3 @@ class comment(models.Model):
     )
     commentText = models.TextField(max_length=500)
     isApproved = models.IntegerField(default=0)
-    commentID = models.AutoField()

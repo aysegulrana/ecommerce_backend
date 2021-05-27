@@ -126,6 +126,20 @@ class update(APIView):
             product1.save()
             return Response("Stock is updated")
 
+class updatePrice(APIView):
+    def get(self, request, id, x, price, format=None):
+
+        if x==1:
+            product1 = product.objects.get(id=id)
+            product1.product_price += price
+            product1.save()
+            return Response("Price is updated")
+        else:
+            product1 = product.objects.get(id=id)
+            product1.product_price -= price
+            product1.save()
+            return Response("Price is updated")
+
 class cartAPI(APIView):
     """
     API endpoint that allows carts to be viewed or edited.
@@ -229,7 +243,6 @@ class orderStatus(APIView):
         serializer = orderSerializer(orderInProcess)
         return Response(serializer.data)
 
-#OLMADI BU
 # cart'ı order'a dönüştürmek için
 class cartToOrder(APIView):
     def get(self, request, id):
@@ -269,6 +282,9 @@ class cartToOrder(APIView):
             send_mail(subject,message,from_email,to_list,fail_silently=True)"""
 
             #item.delete() #remove from the cart
+        for i in items:
+            i.delete()
+        items.save()
         order_items = orderItem.objects.filter(order=o)
         serializer = orderItemSerializer(order_items, many=True)
         return Response(serializer.data)
@@ -321,6 +337,15 @@ class comments(APIView):
 
 class deleteComment(APIView):
     def get(self, request, comment_id, format=None):
-        snippet = comment.objects.filter(commentID=comment_id)
+        snippet = comment.objects.filter(id=comment_id)
         snippet.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+class rate(APIView):
+    def get(self,request, productID,rate):
+        p=product.objects.get(id=productID)
+        x = (p.rate * p.rate_number) + float(rate)
+        p.rate_number+=1
+        p.rate=x/p.rate_number
+        p.save()
+        return Response("Rate is updated")
