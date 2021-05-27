@@ -29,6 +29,7 @@ urlpatterns = [
     path('product/', views.productList.as_view()),
     path('delete/<int:pk>/', views.delete.as_view()),
     path('update/<int:pk>/<int:x>/<int:count>/', views.update.as_view()),
+    path('updateprice/<int:id>/<int:x>/<int:price>/', views.updatePrice.as_view()),
     path('cartAPI/', views.cartAPI.as_view()),
     path('updateCart/<str:userID>/<int:productID>/<int:quantity>/', views.updateCart.as_view()),
     path('removeFromCart/<int:cartID>/<int:prodID>/', views.removeFromCart.as_view()),

@@ -125,7 +125,7 @@ class update(APIView):
             product1.product_stock -= count
             product1.save()
             return Response("Stock is updated")
-
+#float update edemiyor integer ekleyebiliyoruz
 class updatePrice(APIView):
     def get(self, request, id, x, price, format=None):
 
@@ -323,9 +323,16 @@ class cancelOrderItem(APIView):
 
 class comments(APIView):
     def get(self, request):
-        related_product = request.query_params["id"]
-        p1 = comment.objects.all(id=related_product)
-        serializer = commentSerializer(p1,many=True)
+        try:
+            related_product = request.query_params["id"]
+            if related_product is not None:
+                p1 = product.objects.get(id=related_product)
+                c1=comment.objects.get(productCommenting=p1)
+                serializer = commentSerializer(c1)
+        except:
+            p1 = product.objects.get(id=related_product)
+            c1 = comment.objects.all()
+            serializer = commentSerializer(p1,many=True)
         return Response(serializer.data)
 
     def post(self, request):
