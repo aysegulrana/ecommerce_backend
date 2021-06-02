@@ -45,5 +45,4 @@ urlpatterns = [
     path('rate/<int:productID>/<int:rate>/', views.rate.as_view()),
     path('comments/', views.comments.as_view()),
     path('deletecomment/<int:comment_id>/', views.deleteComment.as_view()),
-    #comment'in path'lerini henüz eklemedim.
 ]

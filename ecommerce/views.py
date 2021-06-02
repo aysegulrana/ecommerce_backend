@@ -19,6 +19,7 @@ from .models import cartItem
 from django.shortcuts import get_object_or_404
 from django.conf import settings
 from django.core.mail import send_mail
+from django.shortcuts import get_object_or_404
 
 # Create your views here.
 class userList(APIView):
@@ -249,7 +250,12 @@ class cartToOrder(APIView):
         u = user.objects.get(email=id)
         c = cart.objects.get(customer=u)
         o = order.objects.get(customer=u)
-        items = cartItem.objects.filter(cart=c)
+        try:
+            items = cartItem.objects.filter(cart=c)
+        except Exception as e:
+            print(e)
+            return Response({'status': 'fail'})
+
         s_item = cartItemSerializer(items, many=True)
         for item in s_item.data:
             #s = cartItemSerializer(data=item)
@@ -281,32 +287,13 @@ class cartToOrder(APIView):
             to_list = [id]
             send_mail(subject,message,from_email,to_list,fail_silently=True)"""
 
-            #item.delete() #remove from the cart
         for i in items:
             i.delete()
-        items.save()
+
         order_items = orderItem.objects.filter(order=o)
         serializer = orderItemSerializer(order_items, many=True)
         return Response(serializer.data)
 
-        """serializer = cartItemSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            current_cart=serializer.data.get('cart',None) #we got cart from cart item
-            current_user=current_cart.get('customer',None) #user from cart
-            prod=serializer.data.get('product',None) #product from cart item
-            quant=serializer.data.get('quantity',None) #quantity from cart item
-            current_order=order.objects.get(customer=current_user)
-            current_order.total+=(prod.product_price*quant)
-            #***order from user yoksa yeni order mı create etmeliyim?
-
-            item=orderItem.objects.create(product=prod,order=current_order,quantity=quant,state=0)
-            s_order=orderItemSerializer(data=item)
-
-            if s_order.is_valid():
-                s_order.save()
-                return Response(s_order.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)"""
 
 #API for cancelling an existing order. Takes order ID as parameter
 class cancelOrder(APIView):
