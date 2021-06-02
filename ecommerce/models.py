@@ -1,7 +1,6 @@
 from django.db import models
 from CS308 import settings
-
-
+from datetime import datetime
 # Create your models here.
 class user(models.Model):
     # REQUIRED_FIELDS=('email')
@@ -55,7 +54,7 @@ class cartItem(models.Model):
         on_delete=models.CASCADE
     )
     quantity = models.PositiveIntegerField(default=1, null=True, blank=True)
-
+    time = models.DateTimeField(default=datetime.now, blank=True)
     def __unicode__(self):
         return '%s: %s' % (self.product.title, self.quantity)
 
@@ -85,7 +84,7 @@ class orderItem(models.Model):
     )
     quantity = models.PositiveIntegerField(null=True, blank=True)
     state=models.IntegerField()
-
+    time = models.DateTimeField(default=datetime.now, blank=True)
     #order'da total price artırılması yazılacak.
     #def __unicode__(self):
         #return '%s: %s' % (self.product.title, self.quantity)

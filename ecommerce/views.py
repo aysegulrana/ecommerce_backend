@@ -157,6 +157,13 @@ class cartAPI(APIView):
         else:
             return Response("Cart is empty")
 
+    def post(self, request):
+        serializer = cartSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 class updateCart(APIView):
     def get(self, request, userID, productID,quantity):
         productToAdd = product.objects.get(id= productID)
@@ -227,8 +234,12 @@ class orderAPI(APIView):
         else:
             return Response("No orders")
 
-    queryset = order.objects.all()
-    serializer_class = orderSerializer
+    def post(self, request):
+        serializer = orderSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class orderStatus(APIView):
     def get(self, request, userID, productID, quantity):
@@ -258,10 +269,6 @@ class cartToOrder(APIView):
 
         s_item = cartItemSerializer(items, many=True)
         for item in s_item.data:
-            #s = cartItemSerializer(data=item)
-            #if s.is_valid():
-                #s.save()
-
             p = item.get('product',None) #get product from cart item
             p=product.objects.get(id=p.get('id',None))
             q = item.get('quantity', None)  #get quantity from cart item
@@ -271,7 +278,7 @@ class cartToOrder(APIView):
                 existing_order_item.quantity += q
                 existing_order_item.save()
             else:
-                order_item =orderItem.objects.create(product=p,order=o,quantity=q,state=0)
+                order_item = orderItem.objects.create(product=p,order=o,quantity=q,state=0)
                 s_order = orderItemSerializer(data=order_item)
                 if s_order.is_valid():
                     s_order.save()
@@ -334,6 +341,14 @@ class deleteComment(APIView):
         snippet = comment.objects.filter(id=comment_id)
         snippet.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+class approveComment(APIView):
+    def get(self, request, comment_id):
+        c=comment.objects.get(id=comment_id)
+        c.isApproved=1
+        c.save()
+        serializer = commentSerializer(c)
+        return Response(serializer.data)
 
 class rate(APIView):
     def get(self,request, productID,rate):
