@@ -70,13 +70,14 @@ class order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     order_id = models.AutoField(primary_key=True)
-    seller = models.ForeignKey(
+    """seller = models.ForeignKey(
         user,
-        related_name='orders',
+        related_name='orderseller',
         on_delete=models.CASCADE,
         null=True,
-        blank=True
-    )
+        blank=True,
+        default='a@a.com'
+    )"""
     order_status = models.IntegerField(default=0) #0: created, 1: on delivery, 2: delivered, 3: refund requested, 4: cancelled
 
 class orderItem(models.Model):

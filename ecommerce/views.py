@@ -267,7 +267,7 @@ class orderAPI(APIView):
         serializer = orderSerializer(orderInProcess)
         return Response(serializer.data)"""
 
-# cart'ı order'a dönüştürmek için
+#cart'ı order'a dönüştürmek için
 class cartToOrder(APIView):
     def get(self, request, id):
         u = user.objects.get(email=id)
@@ -290,7 +290,7 @@ class cartToOrder(APIView):
                 existing_order_item.quantity += q
                 existing_order_item.save()
             else:
-                order_item = orderItem.objects.create(product=p,order=o,quantity=q,state=0)
+                order_item = orderItem.objects.create(product=p,order=o,quantity=q)
                 s_order = orderItemSerializer(data=order_item)
                 if s_order.is_valid():
                     s_order.save()
