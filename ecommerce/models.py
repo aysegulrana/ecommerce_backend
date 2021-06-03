@@ -70,6 +70,14 @@ class order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     order_id = models.AutoField(primary_key=True)
+    seller = models.ForeignKey(
+        user,
+        related_name='orders',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True
+    )
+    order_status = models.IntegerField(default=0) #0: created, 1: on delivery, 2: delivered, 3: refund requested, 4: cancelled
 
 class orderItem(models.Model):
     order = models.ForeignKey(
@@ -83,7 +91,6 @@ class orderItem(models.Model):
         on_delete=models.CASCADE
     )
     quantity = models.PositiveIntegerField(null=True, blank=True)
-    state=models.IntegerField()
     time = models.DateTimeField(default=datetime.now, blank=True)
     #order'da total price artırılması yazılacak.
     #def __unicode__(self):

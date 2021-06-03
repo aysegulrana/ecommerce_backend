@@ -141,6 +141,17 @@ class updatePrice(APIView):
             product1.save()
             return Response("Price is updated")
 
+        # Notifying registered users of price updates
+
+        subject = "Price Update"
+        message = "Price for " + product1.product_name + " is updated. New price is" + product1.product_price
+        from_email = settings.EMAIL_HOST_USER
+        userList = user.get.all()
+        to_list = []
+        for u in userList:
+            to_list.append(u.email)
+        send_mail(subject,message,from_email,to_list,fail_silently=True)
+
 class cartAPI(APIView):
     """
     API endpoint that allows carts to be viewed or edited.
@@ -241,7 +252,8 @@ class orderAPI(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class orderStatus(APIView):
+#orderItem modelinden status field'ı kaldırıp order modeline ekledik.
+"""class orderStatus(APIView):
     def get(self, request, userID, productID, quantity):
         p = product.objects.get(id= productID)
         u = user.objects.get(email= userID)
@@ -253,7 +265,7 @@ class orderStatus(APIView):
             order_item.save()
 
         serializer = orderSerializer(orderInProcess)
-        return Response(serializer.data)
+        return Response(serializer.data)"""
 
 # cart'ı order'a dönüştürmek için
 class cartToOrder(APIView):
@@ -287,12 +299,12 @@ class cartToOrder(APIView):
             o.save()
 
             #Sending the invoice
-            """          
+
             subject = "Invoice"
             message = "Thank you for your order. You may find the invoice attached."
             from_email = settings.EMAIL_HOST_USER
             to_list = [id]
-            send_mail(subject,message,from_email,to_list,fail_silently=True)"""
+            send_mail(subject,message,from_email,to_list,fail_silently=True)
 
         for i in items:
             i.delete()
@@ -306,7 +318,7 @@ class cartToOrder(APIView):
 class cancelOrder(APIView):
     def get(self, request, ID):
         snippet = order.objects.filter(order_id=ID)
-        snippet.delete()
+        snippet.order_status = 4
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 class cancelOrderItem(APIView):
@@ -358,3 +370,28 @@ class rate(APIView):
         p.rate=x/p.rate_number
         p.save()
         return Response("Rate is updated")
+
+#API for viewing all invoices within a date range.
+class viewOrders(APIView):
+    def get(self,request, start_date, end_date, seller):
+        orders = order.objects.filter(seller=seller, date__range=[start_date, end_date])
+        serializer = orderSerializer(orders, many=True)
+        return Response(serializer.data)
+
+class requestRefund(APIView):
+    def get(self, orderID):
+        refund_order = order.objects.filter(order_id = orderID)
+        refund_order.order_status = 3
+
+        #inform seller about refund request
+        subject = "Refund"
+        message = "Customer " +  refund_order.customer.firstname + refund_order.customer.lastname + "wants to cancel order with id " + orderID
+        from_email = settings.EMAIL_HOST_USER
+        to_list = [refund_order.seller.email]
+        send_mail(subject, message, from_email, to_list, fail_silently=True)
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+
+
