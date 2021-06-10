@@ -40,9 +40,10 @@ class userList(APIView):
             serializer.save()
             subject = "Your account is active!"
             message = "You have successfully registered to our website."
-            from_email = settings.EMAIL_HOST_USER
-            to_list = [serializer.email]
-            send_mail(subject,message,from_email,to_list,fail_silently=True)
+            #from_email = settings.EMAIL_HOST_USER
+            to_list = [serializer.data.get('email',None)]
+            print(to_list)
+            send_mail(subject,message,None,to_list,fail_silently=True)
 
             u=user.objects.get(email=serializer.data.get('email',None))
             empty_cart=cart.objects.create(customer=u)
@@ -382,10 +383,6 @@ class postComment(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
-
-
-
 class deleteComment(APIView):
     def get(self, request, comment_id, format=None):
         snippet = comment.objects.filter(id=comment_id)
@@ -401,7 +398,7 @@ class approveComment(APIView):
         return Response(serializer.data)
 
 class rate(APIView):
-    def get(self,request, productID,rate):
+    def get(self,request, productID, rate):
         p=product.objects.get(id=productID)
         x = (p.rate * p.rate_number) + float(rate)
         p.rate_number+=1
