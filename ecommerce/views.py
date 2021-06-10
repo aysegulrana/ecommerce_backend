@@ -8,6 +8,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .models import user, comment
+from datetime import datetime
 from .serializers import userSerializer, commentSerializer
 from .serializers import productSerializer
 from .models import product
@@ -50,6 +51,11 @@ class userList(APIView):
             s_cart=cartSerializer(data=empty_cart)
             if s_cart.is_valid():
                 s_cart.save()
+
+            empty_order = order.objects.create(customer=u, created_at=datetime.now, updated_at=datetime.now,total=0)
+            s_order = orderSerializer(data=empty_order)
+            if s_order.is_valid():
+                s_order.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

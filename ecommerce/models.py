@@ -112,3 +112,4 @@ class comment(models.Model):
     isApproved = models.IntegerField(default=0)
     id = models.AutoField(primary_key = True)
 
+
