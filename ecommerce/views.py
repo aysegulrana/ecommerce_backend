@@ -208,6 +208,22 @@ class emptyCart(APIView):
         serializer = cartSerializer(currentCart)
         return Response(serializer.data)
 
+class totalCart(APIView):
+    def get(self, request, cartID):
+        c=cart.objects.get(cart_id=cartID)
+        total=0
+        try:
+            items = cartItem.objects.filter(cart=c)
+        except Exception as e:
+            print(e)
+            return Response({'status': 'fail'})
+        s_item = cartItemSerializer(items, many=True)
+        for item in s_item.data:
+            p = item.get('product', None)  # get product from cart item
+            px = product.objects.get(id=p.get('id', None))
+            total+=px.product_price
+        return Response(total)
+
 class removeFromCart(APIView):
     def get(self, request, cartID, prodID):
         c = cart.objects.get(cart_id=cartID)
@@ -319,11 +335,14 @@ class cancelOrder(APIView):
     def get(self, request, ID):
         snippet = order.objects.filter(order_id=ID)
         snippet.order_status = 4
+        snippet.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 class cancelOrderItem(APIView):
-    def get(self, request, prodID):
-        snippet = orderItem.objects.filter(product.objects.get(id=prodID))
+    def get(self, request, prodID,orderID):
+        o=order.objects.get(order_id=orderID)
+        p=product.objects.get(id=prodID)
+        snippet = orderItem.objects.filter(order=o,product=p)
         snippet.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
