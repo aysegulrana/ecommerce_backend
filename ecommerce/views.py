@@ -301,7 +301,8 @@ class cartToOrder(APIView):
             p = item.get('product',None) #get product from cart item
             p=product.objects.get(id=p.get('id',None))
             q = item.get('quantity', None)  #get quantity from cart item
-
+            p.product_stock-=1
+            p.save()
             existing_order_item = orderItem.objects.filter(order=o, product=p).first()
             if existing_order_item:
                 existing_order_item.quantity += q
