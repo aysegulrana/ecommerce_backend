@@ -101,12 +101,14 @@ class comment(models.Model):
     userCommenting = models.ForeignKey(
         user,
         related_name='user',
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
     )
     productCommenting = models.ForeignKey(
         product,
         related_name='product',
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
     )
     commentText = models.TextField(max_length=500)
     isApproved = models.IntegerField(default=0)
+    id = models.AutoField(primary_key = True)
+

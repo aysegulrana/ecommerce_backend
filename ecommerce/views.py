@@ -327,26 +327,45 @@ class cancelOrderItem(APIView):
         snippet.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-class comments(APIView):
-    def get(self, request):
+class getAllComments(APIView):
+    def get(self, request,pid):
         try:
-            related_product = request.query_params["id"]
-            if related_product is not None:
-                p1 = product.objects.get(id=related_product)
-                c1=comment.objects.get(productCommenting=p1)
-                serializer = commentSerializer(c1)
+            c1 = comment.objects.filter(productCommenting= pid)
+            serializer = commentSerializer(c1, many=True)
+            return Response(serializer.data)
         except:
-            p1 = product.objects.get(id=related_product)
-            c1 = comment.objects.all()
-            serializer = commentSerializer(p1,many=True)
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+        """
+           try:
+               related_product = request.query_params["id"]
+               if related_product is not None:
+                   p1 = product.objects.get(id=related_product)
+                   c1=comment.objects.get(productCommenting=p1,many=True)
+                   serializer = commentSerializer(c1)
+           except:
+               p1 = product.objects.get(id=related_product)
+               c1 = comment.objects.all()
+               serializer = commentSerializer(p1,many=True)
+           return Response(serializer.data)"""
+
+class getCommentById(APIView):
+    def get(self, request, comment_id):
+        c1 = comment.objects.get(id=comment_id)
+        serializer = commentSerializer(c1)
         return Response(serializer.data)
 
+class postComment(APIView):
     def post(self, request):
         serializer = commentSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
 
 class deleteComment(APIView):
     def get(self, request, comment_id, format=None):

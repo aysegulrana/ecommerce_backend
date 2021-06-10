@@ -42,6 +42,10 @@ urlpatterns = [
     path('changePassword/<str:mail>/<str:new_pass>/', views.changePassword.as_view()),
     path('cartToOrder/<str:id>/', views.cartToOrder.as_view()),
     path('rate/<int:productID>/<int:rate>/', views.rate.as_view()),
-    path('comments/', views.comments.as_view()),
-    path('deletecomment/<int:comment_id>/', views.deleteComment.as_view()),
+    path('postComment/', views.postComment.as_view()),
+    path('deleteComment/<int:comment_id>/', views.deleteComment.as_view()),
+    path('approveComment/<int:comment_id>/', views.approveComment.as_view()),
+    path('getCommentById/<int:comment_id>/', views.getCommentById.as_view()),
+    path('getAllComments/<int:pid>/', views.getAllComments.as_view()),
+
 ]
