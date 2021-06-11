@@ -283,9 +283,9 @@ class orderAPI(APIView):
         u = user.objects.get(email= userID)
         orderInProcess = order.objects.get(customer=u)
 
-        order_item = orderItem.objects.filter(order=orderInProcess, product=p).first()
+        #order_item = orderItem.objects.filter(order=orderInProcess, product=p).first()
         if order_item:
-            order_item.state += 1
+            order.state += 1
             order_item.save()
 
         serializer = orderSerializer(orderInProcess)
@@ -354,7 +354,7 @@ class cancelOrderItem(APIView):
         snippet = orderItem.objects.filter(order=o,product=p)
         snippet.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-
+#sadece approved olanları alacak şekilde düzenlenecek
 class getAllComments(APIView):
     def get(self, request,pid):
         try:
@@ -364,18 +364,14 @@ class getAllComments(APIView):
         except:
             return Response(status=status.HTTP_204_NO_CONTENT)
 
-        """
-           try:
-               related_product = request.query_params["id"]
-               if related_product is not None:
-                   p1 = product.objects.get(id=related_product)
-                   c1=comment.objects.get(productCommenting=p1,many=True)
-                   serializer = commentSerializer(c1)
-           except:
-               p1 = product.objects.get(id=related_product)
-               c1 = comment.objects.all()
-               serializer = commentSerializer(p1,many=True)
-           return Response(serializer.data)"""
+class getAllApprovedComments(APIView):
+    def get(self, request,pid):
+        try:
+            c1 = comment.objects.filter(productCommenting= pid,isApproved=1)
+            serializer = commentSerializer(c1, many=True)
+            return Response(serializer.data)
+        except:
+            return Response(status=status.HTTP_204_NO_CONTENT)
 
 class getCommentById(APIView):
     def get(self, request, comment_id):

@@ -48,5 +48,5 @@ urlpatterns = [
     path('approveComment/<int:comment_id>/', views.approveComment.as_view()),
     path('getCommentById/<int:comment_id>/', views.getCommentById.as_view()),
     path('getAllComments/<int:pid>/', views.getAllComments.as_view()),
-
+    path('getApprovedComments/<int:pid>/', views.getAllApprovedComments.as_view()),
 ]
