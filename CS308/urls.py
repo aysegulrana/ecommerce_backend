@@ -36,7 +36,6 @@ urlpatterns = [
     path('removeFromCart/<int:cartID>/<int:prodID>/', views.removeFromCart.as_view()),
     path('emptyCart/<int:cartID>/', views.emptyCart.as_view()),
     path('orderAPI/', views.orderAPI.as_view()),
-    path('cancelOrder/<int:ID>/', views.cancelOrder.as_view()),
     path('cancelOrderItem/<int:prodID>/<int:orderID>/', views.cancelOrderItem.as_view()),
     path('changeAddress/<str:mail>/<str:new_address>/', views.changeAddress.as_view()),
     path('changeName/<str:mail>/<str:name>/<str:surname>/', views.changeName.as_view()),
@@ -49,4 +48,5 @@ urlpatterns = [
     path('getCommentById/<int:comment_id>/', views.getCommentById.as_view()),
     path('getAllComments/<int:pid>/', views.getAllComments.as_view()),
     path('getApprovedComments/<int:pid>/', views.getAllApprovedComments.as_view()),
+    path('requestRefund/<int:orderID>/', views.requestRefund.as_view()),
 ]

@@ -93,6 +93,7 @@ class orderItem(models.Model):
     )
     quantity = models.PositiveIntegerField(null=True, blank=True)
     time = models.DateTimeField(default=datetime.now, blank=True)
+    status=models.IntegerField(default=0)
     #order'da total price artırılması yazılacak.
     #def __unicode__(self):
         #return '%s: %s' % (self.product.title, self.quantity)

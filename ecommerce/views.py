@@ -345,15 +345,26 @@ class cancelOrder(APIView):
         snippet = order.objects.filter(order_id=ID)
         snippet.order_status = 4
         snippet.save()
+        items=orderItem.objects.filter(order_id=ID)
+        s_item = orderItemSerializer(items, many=True)
+        for i in s_item.data:
+            p = i.get('product', None)
+            prod = product.objects.get(id=p.get('id', None))
+            prod.stock += 1
+            prod.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 class cancelOrderItem(APIView):
     def get(self, request, prodID,orderID):
         o=order.objects.get(order_id=orderID)
         p=product.objects.get(id=prodID)
-        snippet = orderItem.objects.filter(order=o,product=p)
-        snippet.delete()
+        items = orderItem.objects.get(order=o,product=p)
+        items.status = 4
+        items.save()
+        p.product_stock+=1
+        p.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
 #sadece approved olanları alacak şekilde düzenlenecek
 class getAllComments(APIView):
     def get(self, request,pid):
@@ -418,10 +429,10 @@ class viewOrders(APIView):
         return Response(serializer.data)
 
 class requestRefund(APIView):
-    def get(self, orderID):
+    def get(self, request,orderID):
         refund_order = order.objects.filter(order_id = orderID)
         refund_order.order_status = 3
-
+        refund_order.save()
         #inform seller about refund request
         subject = "Refund"
         message = "Customer " +  refund_order.customer.firstname + refund_order.customer.lastname + "wants to cancel order with id " + orderID
