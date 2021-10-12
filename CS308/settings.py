@@ -85,28 +85,13 @@ WSGI_APPLICATION = 'CS308.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'i8CdCDwHhl',
+        'NAME': 'yyyy',
         'HOST': 'remotemysql.com',
         'PORT': '3306',
-        'USER': 'i8CdCDwHhl',
-        'PASSWORD': 'Tufed6BgJw',
-      #  'TEST': {
-       #     'NAME': 'mytestdatabase',
-        #    'ENGINE': 'django.db.backends.mysql',
-         #   'HOST': 'remotemysql.com',
-          #  'PORT': '3306',
-           # 'USER': 'i8CdCDwHhl',
-           # 'PASSWORD': 'Tufed6BgJw',
-        #},"""
+        'USER': 'xxxx',
+        'PASSWORD': 'zzzz',
     }
 }
-
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_USE_TLS=True
-EMAIL_HOST='smtp.gmail.com'
-EMAIL_HOST_USER='reanaxxmills@gmail.com'
-EMAIL_HOST_PASSWORD='reanainatlantis43'
-EMAIL_PORT=587
 
 """REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES':(
